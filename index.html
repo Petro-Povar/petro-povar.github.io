@@ -574,7 +574,7 @@ dialog::backdrop{background:rgba(28,18,15,.55);backdrop-filter:blur(2px)}
           <div class="f"><label for="oDate">Дата</label><input id="oDate" name="date" type="date" required><span class="msg" id="oDateMsg">Выберите дату</span></div>
           <div class="f"><label for="oTime">Время</label><input id="oTime" name="time" type="time" value="18:00"></div>
         </div>
-        <span class="hint" id="oDateHint" style="font-size:.8rem;color:var(--muted);margin-top:-6px">Заказ принимается минимум за 2–3 дня</span>
+        <span class="hint" id="oDateHint" style="font-size:.8rem;color:var(--muted);margin-top:-6px">Обычный срок — 2–3 дня. Можно выбрать любой день — шеф уточнит.</span>
         <div class="f"><label for="oAddr">Адрес</label><input id="oAddr" name="address" autocomplete="street-address" maxlength="200" placeholder="Улица, дом, квартира"></div>
         <div class="two">
           <div class="f"><label for="oName">Имя</label><input id="oName" name="name" autocomplete="name" maxlength="80"><span class="msg">Напишите имя</span></div>
@@ -811,10 +811,18 @@ function post(path,body,ms){
 }
 function minDays(fmtVal){return fmtVal==="Банкет"?5:2}
 function updDateMin(){
-  var f=($("#ordForm").format.value),d=minDays(f),el=$("#oDate");
-  el.min=isoPlus(d);
-  $("#oDateHint").textContent=f==="Банкет"?"Банкет заказывают минимум за 5–7 дней":"Заказ принимается минимум за 2–3 дня";
-  if(el.value&&el.value<el.min)el.value=el.min;
+  var el=$("#oDate");
+  el.min=isoPlus(0);
+  el.removeAttribute("max");
+  dateHint();
+}
+function dateHint(){
+  var f=($("#ordForm").format.value),d=minDays(f),v=$("#oDate").value,el=$("#oDateHint");
+  var base=f==="Банкет"?"Обычно банкет готовят за 5–7 дней":"Обычный срок — 2–3 дня";
+  var soon=v&&v<isoPlus(d);
+  el.textContent=soon?base+". Дата близкая — шеф подтвердит, успевает ли.":base+". Можно выбрать любой день — шеф уточнит.";
+  el.style.color=soon?"var(--wine)":"var(--muted)";
+  el.style.fontWeight=soon?"600":"400";
 }
 function orderText(no,o,lines,total){
   var s="Здравствуйте! "+(no?"Заказ №"+no+" с сайта PETRO.POVAR":"Заказ с сайта PETRO.POVAR")+"\n\n";
@@ -847,7 +855,7 @@ function onOrder(e){
   var o={kind:"order",format:f.format.value,date:f.date.value,time:f.time.value,address:f.address.value.trim(),guests:f.guests.value,name:f.name.value.trim(),phone:normPhone(f.phone.value),comment:f.comment.value.trim(),website:f.website.value};
   var err=null;
   bad(f.date,!o.date);if(!o.date)err=err||f.date;
-  if(o.date&&o.date<isoPlus(minDays(o.format))){bad(f.date,true);$("#oDateMsg").textContent="Слишком близко: нужно минимум за "+minDays(o.format)+" дня";err=err||f.date}else $("#oDateMsg").textContent="Выберите дату";
+
   bad(f.name,!o.name);if(!o.name)err=err||f.name;
   bad(f.phone,o.phone.length!==11);if(o.phone.length!==11)err=err||f.phone;
   if(err){err.focus();return}
@@ -909,8 +917,9 @@ maskPhone($("#oPhone"));maskPhone($("#rPhone"));
 $("#ordForm").addEventListener("submit",onOrder);
 $("#reqForm").addEventListener("submit",onReq);
 $$("#ordForm [name=format]").forEach(function(r){r.addEventListener("change",updDateMin)});
+$("#oDate").addEventListener("change",dateHint);
 $$("#ordForm input,#reqForm input").forEach(function(i){i.addEventListener("input",function(){bad(i,false)})});
-$("#rDate").min=isoPlus(2);
+$("#rDate").min=isoPlus(0);
 updDateMin();
 var th=LS.get("pp_theme_v","light");try{th=localStorage.getItem("pp_theme")||"light"}catch(e){}
 $$("#dSet [name=theme]").forEach(function(r){r.checked=r.value===th;r.addEventListener("change",function(){try{localStorage.setItem("pp_theme",r.value)}catch(e){}applyTheme(r.value)})});
