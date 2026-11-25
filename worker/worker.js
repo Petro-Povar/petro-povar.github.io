@@ -29,6 +29,7 @@ export default {
         const row = await env.DB.prepare("SELECT v, updated FROM kv WHERE k='content'").first();
         return json({ content: row ? JSON.parse(row.v) : null, updated: row ? row.updated : 0 }, 200, { ...cors, "Cache-Control": "no-store" });
       }
+      if (p === "/api/busy" && m === "GET") return busyList(env, cors);
       if (p.startsWith("/img/") && m === "GET") return serveImage(env, p.slice(5), cors);
       if (p === "/api/order" && m === "POST") return createOrder(req, env, ctx, cors);
 
@@ -165,11 +166,27 @@ async function createOrder(req, env, ctx, cors) {
     }
     if (!data.items.length) return json({ error: "Заказ пустой" }, 400, cors);
   }
+  if (data.date && data.time && (await activeSlots(env)).indexOf(data.date + " " + data.time) >= 0)
+    return json({ error: "Это время уже занято, выберите другое" }, 409, cors);
   const res = await env.DB.prepare("INSERT INTO orders(created,kind,status,name,phone,data,total,ip) VALUES(?,?,?,?,?,?,?,?)")
     .bind(Date.now(), kind, "new", name, phone, JSON.stringify(data), total, ipH).run();
   const id = res.meta.last_row_id;
   ctx.waitUntil(telegram(env, orderMessage(id, kind, name, phone, data, total)).catch(() => {}));
   return json({ id }, 200, cors);
+}
+async function activeSlots(env) {
+  const { results } = await env.DB.prepare("SELECT data FROM orders WHERE status IN ('new','confirmed') ORDER BY id DESC LIMIT 500").all();
+  const out = [];
+  for (const r of results) {
+    const d = safeParse(r.data) || {};
+    if (d.date && d.time) out.push(d.date + " " + d.time);
+  }
+  return out;
+}
+async function busyList(env, cors) {
+  const since = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const busy = (await activeSlots(env)).filter((s) => s.slice(0, 10) >= since);
+  return json({ busy }, 200, { ...cors, "Cache-Control": "no-store" });
 }
 function money(n) { return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " ₸"; }
 function ru(d) { const p = String(d || "").split("-"); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : d; }
