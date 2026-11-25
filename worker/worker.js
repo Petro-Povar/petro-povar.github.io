@@ -167,7 +167,7 @@ async function createOrder(req, env, ctx, cors) {
     if (!data.items.length) return json({ error: "Заказ пустой" }, 400, cors);
   }
   if (data.date && data.time && (await activeSlots(env)).indexOf(data.date + " " + data.time) >= 0)
-    return json({ error: "Это время уже занято, выберите другое" }, 409, cors);
+    return json({ error: "Это время уже занято — выберите другое" }, 409, cors);
   const res = await env.DB.prepare("INSERT INTO orders(created,kind,status,name,phone,data,total,ip) VALUES(?,?,?,?,?,?,?,?)")
     .bind(Date.now(), kind, "new", name, phone, JSON.stringify(data), total, ipH).run();
   const id = res.meta.last_row_id;

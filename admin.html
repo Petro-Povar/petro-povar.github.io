@@ -298,7 +298,7 @@ function renderOrders(m){
     var kv=[];function add(k,v){if(v){kv.push(h("dt",{text:k}));kv.push(h("dd",{text:v}))}}
     add("Формат",d.format);add("Повод",d.occasion);add("Дата",d.date?d.date.split("-").reverse().join(".")+(d.time?", "+d.time:""):"");add("Адрес",d.address);add("Гостей",d.guests);add("Комментарий",d.comment);
     var its=(d.items||[]).map(function(i){return h("li",null,[h("span",{text:i.name+" × "+i.qty}),h("b",{text:fmt(i.price*i.qty)})])});
-    var wa="https://wa.me/"+o.phone+"?text="+encodeURIComponent("Здравствуйте, "+o.name+"! Это шеф Кайржан (PETRO.POVAR), по вашему "+(o.kind==="order"?"заказу":"обращению")+" №"+o.id+".");
+    var wa="https://wa.me/"+o.phone+"?text="+encodeURIComponent("Здравствуйте, "+o.name+"! Это шеф Қайыржан (PETRO.POVAR), по вашему "+(o.kind==="order"?"заказу":"обращению")+" №"+o.id+".");
     m.appendChild(h("div.card.ord"+(o.status==="new"?".new":""),null,[
       h("div.row",null,[h("div.grow",null,[h("h3",null,[(o.kind==="order"?"Заказ":"Заявка")+" №"+o.id,h("span.badge."+o.status,{text:ST[o.status]||o.status})]),h("div.meta",{text:when})]),sel]),
       h("dl.kv",null,[h("dt",{text:"Имя"}),h("dd",{text:o.name}),h("dt",{text:"Телефон"}),h("dd",{text:pv(o.phone)})].concat(kv)),
@@ -372,10 +372,10 @@ function renderSets(m){
 function renderTexts(m){
   var s=C.settings;
   m.appendChild(h("div.card",null,[h("h2",{text:"Главный экран",style:"font-size:1.4rem;margin-bottom:12px"}),inp(s,"heroKicker",{label:"Строка над заголовком"}),inp(s,"heroTitle",{label:"Заголовок",area:true,rows:2}),inp(s,"heroText",{label:"Текст под заголовком",area:true,rows:3}),inp(s,"notice",{label:"Объявление вверху сайта",ph:"Например: принимаем заказы на Новый год до 25 декабря",hint:"Оставьте пустым, чтобы скрыть"})]));
-  m.appendChild(h("div.card",null,[h("h2",{text:"О шефе",style:"font-size:1.4rem;margin-bottom:12px"}),inp(s,"aboutTitle",{label:"Заголовок"}),inp(s,"aboutText",{label:"Текст",area:true,rows:5})]));
+  m.appendChild(h("div.card",null,[h("h2",{text:"О шефе",style:"font-size:1.4rem;margin-bottom:12px"}),h("div.row",{style:"gap:14px;align-items:center;margin-bottom:12px"},[photo(s,"aboutImg",false).firstChild,h("p.note",{text:"Фото шефа. Лучше квадратное, лицо по центру. Без фото на сайте стоит прежнее."})]),inp(s,"aboutTitle",{label:"Заголовок"}),inp(s,"aboutText",{label:"Текст",area:true,rows:5})]));
   m.appendChild(h("div.sec-h",null,[h("h2",{text:"Услуги"}),h("button.btn.s",{type:"button",text:"＋ Услуга",on:{click:function(){C.services.push({title:"Новая услуга",text:"",meta:"",img:""});dirty();render()}}})]));
   C.services.forEach(function(sv,i){
-    m.appendChild(h("div.card.dish"+(sv.hidden?".off":""),null,[photo(sv,"img",false).firstChild,h("div",null,[inp(sv,"title",{cls:"nm"}),h("div",{style:"margin-top:8px"},[inp(sv,"text",{area:true,rows:2,ph:"Описание"})]),h("div",{style:"margin-top:8px"},[inp(sv,"meta",{ph:"Метки через ·  например: от 30 000 ₸ · за 2–3 дня"})]),h("div.row",{style:"margin-top:8px"},[sw(sv,"hidden","Скрыть"),h("span.grow"),h("button.icon",{type:"button",text:"↑",on:{click:function(){mv(C.services,i,-1)}}}),h("button.icon",{type:"button",text:"↓",on:{click:function(){mv(C.services,i,1)}}}),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить услугу?"))return;C.services.splice(i,1);dirty();render()}}})])])]));
+    m.appendChild(h("div.card.dish"+(sv.hidden?".off":""),null,[photo(sv,"img",false).firstChild,h("div",null,[inp(sv,"title",{cls:"nm"}),h("div",{style:"margin-top:8px"},[inp(sv,"text",{area:true,rows:2,ph:"Описание"})]),h("div",{style:"margin-top:8px"},[inp(sv,"meta",{ph:"Метки через точку «·», например: от 30 000 ₸ · за 2–3 дня"})]),h("div.row",{style:"margin-top:8px"},[sw(sv,"hidden","Скрыть"),h("span.grow"),h("button.icon",{type:"button",text:"↑",on:{click:function(){mv(C.services,i,-1)}}}),h("button.icon",{type:"button",text:"↓",on:{click:function(){mv(C.services,i,1)}}}),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить услугу?"))return;C.services.splice(i,1);dirty();render()}}})])])]));
   });
   m.appendChild(h("div.sec-h",null,[h("h2",{text:"Условия заказа"}),h("button.btn.s",{type:"button",text:"＋ Блок",on:{click:function(){C.conditions.push({title:"Новый блок",items:[]});dirty();render()}}})]));
   C.conditions.forEach(function(c,i){
@@ -419,7 +419,7 @@ function renderSettings(m){
   var testBtn=h("button.btn.p",{type:"button",text:"Проверить уведомления",on:{click:function(){
     testBtn.disabled=true;testBtn.textContent="Отправляю…";tOut.classList.add("hide");
     api("/api/admin/notify/test",{method:"POST"}).then(function(r){
-      say("✅ Готово! Проверочное сообщение отправлено в Telegram"+(r.chats>1?" ("+r.chats+" чата)":"")+".<br>Теперь каждый заказ и каждая заявка с сайта придут туда сразу.");
+      say("✅ Готово! Проверочное сообщение отправлено в Telegram"+(r.chats>1?" ("+r.chats+" "+(r.chats<5?"чата":"чатов")+")":"")+".<br>Теперь каждый заказ и каждая заявка с сайта придут туда сразу.");
     }).catch(function(e){
       say("Не получилось: "+String(e.message||e).replace(/[<>&]/g,"")+"<br>Проверьте, что в Cloudflare добавлен секрет <b>TG_TOKEN</b> и что вы нажали <b>«Старт»</b> у своего бота.");
     }).then(function(){testBtn.disabled=false;testBtn.textContent="Проверить уведомления"});
