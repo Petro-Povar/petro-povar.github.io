@@ -231,6 +231,8 @@ section{position:relative}
 .about{isolation:isolate}
 .about p.t{font-size:1.06rem;line-height:1.75;margin:18px 0 0;max-width:58ch;color:var(--muted)}
 .about .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chef[hidden]{display:none}
+.about.nopic .wrap>div{max-width:760px}
 
 /* отзывы */
 .reviews{background:var(--bg2)}
@@ -375,6 +377,7 @@ dialog::backdrop{background:rgba(15,12,10,.6);backdrop-filter:blur(2px)}
   .steps{grid-template-columns:repeat(4,1fr)}
   .steps li{grid-template-columns:1fr;gap:10px}
   .about .wrap{grid-template-columns:420px 1fr;gap:90px}
+  .about.nopic .wrap{grid-template-columns:1fr}
   .req .wrap{grid-template-columns:.9fr 1.1fr;align-items:start;gap:70px}
   .mtools{display:flex;align-items:center;gap:16px}
   .search{margin:0;flex:0 0 300px}
@@ -484,7 +487,7 @@ dialog::backdrop{background:rgba(15,12,10,.6);backdrop-filter:blur(2px)}
 
 <section class="about sec" id="about">
   <div class="wrap">
-    <figure class="chef"><img src="img/chef-portrait.webp" alt="Шеф-повар Қайыржан" width="720" height="900" loading="lazy"></figure>
+    <figure class="chef" hidden><img alt="Шеф-повар Қайыржан" width="720" height="900" loading="lazy"></figure>
     <div>
       <p class="kick">О шефе</p>
       <h2 id="aTitle">Шеф Қайыржан</h2>
@@ -699,7 +702,7 @@ function renderAll(){
   $("#hText").textContent=tidy(s.heroText);
   $("#aTitle").textContent=tidy(s.aboutTitle);
   $("#aText").textContent=tidy(s.aboutText);
-  $(".chef img").src=s.aboutImg?String(s.aboutImg):"img/chef-portrait.webp";
+  var ch=$(".chef");ch.hidden=!s.aboutImg;if(s.aboutImg)$(".chef img").src=String(s.aboutImg);$("#about").classList.toggle("nopic",!s.aboutImg);
   var n=$("#notice");n.textContent=tidy(s.notice);n.hidden=!s.notice;
   var wa=waLink(s.whatsapp,"Здравствуйте! Пишу с сайта PETRO.POVAR.");
   ["#fab","#navWa","#fWa"].forEach(function(id){$(id).href=wa});
