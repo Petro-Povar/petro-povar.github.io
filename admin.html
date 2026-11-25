@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Админка — PETRO.POVAR</title>
+<meta name="theme-color" content="#2A2320">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<style>
+:root{--parch:#F2E4D3;--paper:#FBF5EE;--wine:#6E1820;--wine2:#8E2A2F;--ink:#2B1A17;--muted:#6F5A50;--line:rgba(110,24,32,.16);--cocoa:#2A2320;--sage:#2F6B47;--err:#B3261E;--amber:#9A6A00;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--serif:"Old Standard TT",Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--parch);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--wine);outline-offset:2px}
+.hide{display:none!important}
+h1,h2,h3{font-family:var(--serif);color:var(--wine);margin:0;line-height:1.15}
+.top{position:sticky;top:0;z-index:20;background:var(--cocoa);color:#F4E9DC;padding:env(safe-area-inset-top) 0 0}
+.top .in{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px}
+.top b{font-family:var(--serif);font-size:1.1rem;letter-spacing:.05em;margin-right:auto}
+.top a{color:#F4E9DC;font-size:.88rem;opacity:.85}
+.pill{font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(244,233,220,.12);white-space:nowrap}
+.pill.saving{color:#F6D58B}.pill.err{background:#B3261E;color:#fff}
+.tabs{max-width:900px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 10px 10px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;height:38px;padding:0 14px;border-radius:999px;border:0;background:transparent;color:#C9B8A8;font-weight:600;font-size:.93rem;position:relative}
+.tab.on{background:#F4E9DC;color:var(--cocoa)}
+.tab .b{display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:10px;background:#E1574C;color:#fff;font-size:.72rem;margin-left:6px;padding:0 5px}
+main{max-width:900px;margin:0 auto;padding:16px 14px 120px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+label.f{display:grid;gap:5px;margin-bottom:12px}
+label.f>span,.lbl{font-size:.82rem;font-weight:600;color:var(--muted)}
+input[type=text],input[type=number],input[type=password],input[type=tel],input:not([type]),select,textarea{width:100%;min-height:46px;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;font-size:16px}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+.price{font-weight:700;font-size:1.15rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--wine);background:transparent;color:var(--wine);font-weight:600;font-size:.93rem;text-decoration:none;white-space:nowrap}
+.btn.p{background:var(--wine);color:#fff}
+.btn.g{background:var(--sage);border-color:var(--sage);color:#fff}
+.btn.s{min-height:36px;padding:0 12px;font-size:.85rem}
+.btn.d{border-color:var(--err);color:var(--err)}
+.btn.ghost{border-color:var(--line);color:var(--ink)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-weight:600;font-size:.9rem;color:var(--ink)}
+.chip.on{background:var(--wine);border-color:var(--wine);color:#fff}
+.chip small{opacity:.7;margin-left:4px}
+.sw{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;cursor:pointer;user-select:none}
+.sw input{appearance:none;-webkit-appearance:none;width:42px;height:26px;border-radius:13px;background:#d8c9ba;position:relative;margin:0;transition:.2s;flex:none;cursor:pointer}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.sw input:checked{background:var(--wine)}
+.sw input:checked::after{left:19px}
+.dish{display:grid;grid-template-columns:72px 1fr;gap:12px}
+.ph{position:relative;width:72px;height:72px;border-radius:50%;overflow:hidden;background:var(--parch);border:2px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:.7rem;text-align:center;line-height:1.2;cursor:pointer;flex:none;padding:0}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph.wide{width:100%;height:auto;aspect-ratio:16/9;border-radius:12px}
+.ph .up{position:absolute;inset:0;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:.75rem;font-weight:600}
+.dish .nm{font-weight:700}
+.pr{display:flex;align-items:center;gap:8px}
+.pr input{max-width:150px}
+.pr span{font-weight:700;color:var(--muted)}
+.more{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.dish.off{opacity:.6}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--parch);color:var(--muted);margin-left:6px;vertical-align:middle}
+.badge.new{background:#FDE3E0;color:var(--err)}.badge.confirmed{background:#FFF1CC;color:var(--amber)}.badge.done{background:#DDF1E3;color:var(--sage)}.badge.cancelled{background:#eee;color:#777}
+.ord h3{font-size:1.25rem}
+.ord .meta{font-size:.85rem;color:var(--muted)}
+.ord ul{margin:8px 0;padding:0;list-style:none}
+.ord li{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+.ord .tot{display:flex;justify-content:space-between;font-weight:700;font-size:1.05rem;margin-top:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.95rem;margin:8px 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:500;word-break:break-word}
+.ord.new{border-color:var(--wine);box-shadow:0 0 0 2px rgba(110,24,32,.12)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.note{font-size:.85rem;color:var(--muted);margin:4px 0 12px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .card{width:100%;max-width:380px;padding:26px 22px}
+.login h1{font-size:2rem;margin-bottom:6px}
+.err{color:var(--err);font-size:.88rem;min-height:1.2em;margin:6px 0}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 10px}
+.sec-h h2{font-size:1.5rem}
+.grp{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:.92rem;z-index:60;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.icon{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;display:inline-grid;place-items:center;font-size:1rem;color:var(--ink);padding:0}
+.help{background:var(--parch);border-radius:12px;padding:12px 14px;font-size:.88rem;line-height:1.5;margin-bottom:12px}
+.help ol{margin:6px 0 0;padding-left:20px}
+@media (min-width:700px){.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}}
+</style>
+</head>
+<body>
+
+<!-- вход -->
+<div class="login hide" id="vLogin">
+  <form class="card" id="loginForm">
+    <h1>PETRO.POVAR</h1>
+    <p class="note" id="loginNote">Вход в админку</p>
+    <label class="f"><span>Пароль</span><input type="password" id="pw" autocomplete="current-password" required></label>
+    <label class="f hide" id="pw2Wrap"><span>Повторите пароль</span><input type="password" id="pw2" autocomplete="new-password"></label>
+    <p class="err" id="loginErr"></p>
+    <button class="btn p" style="width:100%" id="loginBtn">Войти</button>
+    <p class="note" style="margin-top:14px">Пароль вводите латиницей. <a href="./" style="color:var(--wine)">Открыть сайт</a></p>
+  </form>
+</div>
+
+<!-- нет сервера -->
+<div class="login hide" id="vNoApi">
+  <div class="card"><h1>Админка</h1><p class="note">Сервер ещё не подключён: в файле <b>config.js</b> не указан адрес Worker'а.</p><a class="btn" href="./">Открыть сайт</a></div>
+</div>
+
+<!-- приложение -->
+<div class="hide" id="vApp">
+  <header class="top">
+    <div class="in"><b>PETRO.POVAR</b><span class="pill" id="saveSt">Сохранено</span><a href="./" target="_blank" rel="noopener">Сайт ↗</a></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab on" data-tab="orders">Заказы<span class="b hide" id="newCnt">0</span></button>
+      <button class="tab" data-tab="menu">Меню</button>
+      <button class="tab" data-tab="sets">Сеты</button>
+      <button class="tab" data-tab="texts">Тексты</button>
+      <button class="tab" data-tab="reviews">Отзывы</button>
+      <button class="tab" data-tab="settings">Настройки</button>
+    </nav>
+  </header>
+  <main id="main"></main>
+</div>
+<input type="file" id="file" accept="image/*" class="hide">
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="content.js"></script>
+<script>
+(function(){
+"use strict";
+var API=(window.PP_API||"").replace(/\/+$/,"");
+var $=function(s,r){return (r||document).querySelector(s)};
+var TK="pp_admin_token";
+var token=localStorage.getItem(TK)||"";
+var C=null, tab="orders", menuCat=null, orders=[], counts={}, ordFilter="new", lastMax=0;
+var NB=" ";
+function fmt(n){return String(Math.round(+n||0)).replace(/\B(?=(\d{3})+(?!\d))/g,NB)+NB+"₸"}
+function pv(p){p=String(p||"");return p.length===11?"+"+p[0]+" "+p.slice(1,4)+" "+p.slice(4,7)+" "+p.slice(7,9)+" "+p.slice(9):"+"+p}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function uid(p){return p+Date.now().toString(36).slice(-5)+Math.random().toString(36).slice(2,5)}
+function toast(t){var el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("on")},2600)}
+function show(id){["vLogin","vNoApi","vApp"].forEach(function(v){$("#"+v).classList.toggle("hide",v!==id)})}
+
+/* h('div.class',{attrs},[children]) */
+function h(sel,attrs,kids){
+  var p=sel.split("."),el=document.createElement(p[0]||"div");if(p.length>1)el.className=p.slice(1).join(" ");
+  if(attrs)for(var k in attrs){var v=attrs[k];if(v==null||v===false)continue;if(k==="on")for(var ev in v)el.addEventListener(ev,v[ev]);else if(k==="html")el.innerHTML=v;else if(k==="text")el.textContent=v;else if(k in el&&k!=="list")try{el[k]=v}catch(e){el.setAttribute(k,v)}else el.setAttribute(k,v===true?"":v)}
+  (kids||[]).forEach(function(c){if(c==null||c===false)return;el.appendChild(typeof c==="string"?document.createTextNode(c):c)});
+  return el;
+}
+
+/* ---------- api ---------- */
+function api(path,opt){
+  opt=opt||{};var headers={"Content-Type":"application/json"};if(token)headers.Authorization="Bearer "+token;
+  return fetch(API+path,{method:opt.method||"GET",headers:headers,body:opt.body!=null?(typeof opt.body==="string"?opt.body:JSON.stringify(opt.body)):undefined,cache:"no-store"})
+    .then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(r.status===401&&path.indexOf("/api/admin/login")<0&&path.indexOf("/api/admin/setup")<0){logout();throw new Error(j.error||"Войдите заново")}if(!r.ok)throw new Error(j.error||("Ошибка "+r.status));return j})});
+}
+function logout(){token="";localStorage.removeItem(TK);boot()}
+
+/* ---------- login ---------- */
+var setupMode=false;
+function boot(){
+  if(!API){show("vNoApi");return}
+  if(token){show("vApp");start();return}
+  show("vLogin");
+  api("/api/admin/status").then(function(j){
+    setupMode=!j.hasPassword;
+    $("#loginNote").textContent=setupMode?"Первый вход: придумайте пароль для админки (минимум 6 символов) и запомните его.":"Вход в админку";
+    $("#pw2Wrap").classList.toggle("hide",!setupMode);
+    $("#pw").autocomplete=setupMode?"new-password":"current-password";
+    $("#loginBtn").textContent=setupMode?"Создать пароль и войти":"Войти";
+  }).catch(function(e){$("#loginErr").textContent="Сервер не отвечает: "+e.message});
+}
+$("#loginForm").addEventListener("submit",function(e){
+  e.preventDefault();var pw=$("#pw").value,err=$("#loginErr");err.textContent="";
+  if(setupMode){if(pw.length<6){err.textContent="Пароль — минимум 6 символов";return}if(pw!==$("#pw2").value){err.textContent="Пароли не совпадают";return}}
+  $("#loginBtn").disabled=true;
+  api(setupMode?"/api/admin/setup":"/api/admin/login",{method:"POST",body:{password:pw}}).then(function(j){
+    token=j.token;localStorage.setItem(TK,token);$("#pw").value="";$("#pw2").value="";show("vApp");start();
+  }).catch(function(e){err.textContent=e.message}).then(function(){$("#loginBtn").disabled=false});
+});
+
+/* ---------- start ---------- */
+var started=false,poll=null;
+function start(){
+  api("/api/content").then(function(j){
+    C=j.content?fillDefaults(j.content):clone(window.PP_DEFAULT);
+    if(!menuCat&&C.categories[0])menuCat=C.categories[0].id;
+    render();
+  }).catch(function(e){toast(e.message)});
+  loadOrders();
+  if(!started){started=true;poll=setInterval(function(){if(!document.hidden&&token)loadOrders(true)},30000)}
+}
+function fillDefaults(c){var d=window.PP_DEFAULT;["services","conditions","categories","dishes","sets","reviews"].forEach(function(k){if(!Array.isArray(c[k]))c[k]=clone(d[k])});c.settings=Object.assign({},d.settings,c.settings||{});return c}
+
+/* ---------- autosave ---------- */
+var saveT=null,saving=false,again=false;
+function dirty(){setSt("saving","Сохраняю…");clearTimeout(saveT);saveT=setTimeout(save,800)}
+function save(){
+  if(saving){again=true;return}
+  saving=true;
+  api("/api/admin/content",{method:"PUT",body:JSON.stringify(C)}).then(function(){setSt("","Сохранено")}).catch(function(e){setSt("err","Не сохранено — нажмите");toast(e.message)}).then(function(){saving=false;if(again){again=false;save()}});
+}
+function setSt(cls,t){var el=$("#saveSt");el.className="pill "+cls;el.textContent=t}
+$("#saveSt").addEventListener("click",function(){if(this.classList.contains("err"))save()});
+window.addEventListener("beforeunload",function(e){if(saveT&&$("#saveSt").classList.contains("saving")){e.preventDefault();e.returnValue=""}});
+
+/* ---------- fields ---------- */
+function inp(obj,key,o){
+  o=o||{};
+  var el=h(o.area?"textarea":"input",{type:o.area?null:(o.type||"text"),value:obj[key]==null?"":obj[key],placeholder:o.ph||"",inputMode:o.num?"numeric":null,className:o.cls||""});
+  if(o.area&&o.rows)el.rows=o.rows;
+  el.addEventListener("input",function(){var v=el.value;if(o.num)v=v===""?0:Math.max(0,parseInt(v.replace(/\D/g,""))||0);obj[key]=v;if(o.onchange)o.onchange(v);dirty()});
+  return o.label?h("label.f",null,[h("span",{text:o.label}),el,o.hint?h("span.note",{text:o.hint}):null]):el;
+}
+function lines(obj,key,label,hint){
+  var el=h("textarea",{value:(obj[key]||[]).join("\n"),rows:Math.max(3,(obj[key]||[]).length+1)});
+  el.addEventListener("input",function(){obj[key]=el.value.split("\n").map(function(s){return s.trim()}).filter(Boolean);dirty()});
+  return h("label.f",null,[h("span",{text:label}),el,hint?h("span.note",{text:hint}):null]);
+}
+function sw(obj,key,label,invert,cb){
+  var c=h("input",{type:"checkbox",checked:invert?!obj[key]:!!obj[key]});
+  c.addEventListener("change",function(){obj[key]=invert?!c.checked:c.checked;dirty();if(cb)cb()});
+  return h("label.sw",null,[c,label]);
+}
+function photo(obj,key,wide){
+  var b=h("button.ph"+(wide?".wide":""),{type:"button",title:"Заменить фото"});
+  function draw(){b.innerHTML="";if(obj[key])b.appendChild(h("img",{src:obj[key],alt:""}));else b.appendChild(document.createTextNode("+ фото"))}
+  draw();
+  b.addEventListener("click",function(){pickImage(wide?1600:900,function(url){obj[key]=url;draw();dirty()},b)});
+  var wrap=h("div",null,[b]);
+  if(wide)wrap.appendChild(h("button.btn.s.ghost",{type:"button",text:"Убрать фото",style:"margin-top:6px",on:{click:function(){if(!obj[key])return;if(!confirm("Убрать фото?"))return;obj[key]="";draw();dirty()}}}));
+  return wrap;
+}
+var fileCb=null,fileMax=900,fileBtn=null;
+function pickImage(max,cb,btn){fileCb=cb;fileMax=max;fileBtn=btn;$("#file").value="";$("#file").click()}
+$("#file").addEventListener("change",function(){
+  var f=this.files&&this.files[0];if(!f||!fileCb)return;
+  var cb=fileCb,btn=fileBtn;if(btn){btn.appendChild(h("span.up",{text:"Загрузка…"}))}
+  resize(f,fileMax).then(function(r){return api("/api/admin/image",{method:"POST",body:r})}).then(function(j){cb(j.url);toast("Фото загружено")}).catch(function(e){toast("Фото не загрузилось: "+e.message);var u=btn&&btn.querySelector(".up");if(u)u.remove()});
+});
+function resize(file,max){
+  return new Promise(function(res,rej){
+    var img=new Image(),url=URL.createObjectURL(file);
+    img.onload=function(){
+      var s=Math.min(1,max/Math.max(img.width,img.height)),w=Math.round(img.width*s),hh=Math.round(img.height*s);
+      var c=document.createElement("canvas");c.width=w;c.height=hh;c.getContext("2d").drawImage(img,0,0,w,hh);URL.revokeObjectURL(url);
+      var d=c.toDataURL("image/webp",.82),mime="image/webp";
+      if(d.indexOf("data:image/webp")!==0){d=c.toDataURL("image/jpeg",.84);mime="image/jpeg"}
+      res({mime:mime,data:d.split(",")[1]});
+    };
+    img.onerror=function(){rej(new Error("не удалось открыть файл"))};img.src=url;
+  });
+}
+function mv(arr,i,d){var j=i+d;if(j<0||j>=arr.length)return;var t=arr[i];arr[i]=arr[j];arr[j]=t;dirty();render()}
+
+/* ---------- render ---------- */
+document.getElementById("tabs").addEventListener("click",function(e){var t=e.target.closest(".tab");if(!t)return;tab=t.dataset.tab;document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b===t)});render();scrollTo(0,0);if(tab==="orders")loadOrders()});
+function render(){
+  var m=$("#main");m.innerHTML="";
+  if(tab==="orders")return renderOrders(m);
+  if(!C){m.appendChild(h("p.empty",{text:"Загрузка…"}));return}
+  ({menu:renderMenu,sets:renderSets,texts:renderTexts,reviews:renderReviews,settings:renderSettings})[tab](m);
+}
+
+/* orders */
+var ST={new:"Новый",confirmed:"Подтверждён",done:"Выполнен",cancelled:"Отменён"};
+function loadOrders(silent){
+  return api("/api/admin/orders?limit=300").then(function(j){
+    orders=j.orders||[];counts=j.counts||{};
+    var mx=orders.reduce(function(m,o){return Math.max(m,o.id)},0);
+    if(silent&&lastMax&&mx>lastMax){toast("Новый заказ №"+mx);try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}
+    lastMax=mx;
+    var n=counts.new||0,b=$("#newCnt");b.textContent=n;b.classList.toggle("hide",!n);
+    document.title=(n?"("+n+") ":"")+"Админка — PETRO.POVAR";
+    if(tab==="orders")render();
+  }).catch(function(e){if(!silent)toast(e.message)});
+}
+function renderOrders(m){
+  var fl=[["new","Новые"],["confirmed","Подтверждённые"],["done","Выполненные"],["cancelled","Отменённые"],["all","Все"]];
+  m.appendChild(h("div.chips",null,fl.map(function(f){var n=f[0]==="all"?orders.length:(counts[f[0]]||0);return h("button.chip"+(ordFilter===f[0]?".on":""),{type:"button",on:{click:function(){ordFilter=f[0];render()}}},[f[1],h("small",{text:String(n)})])})));
+  var list=orders.filter(function(o){return ordFilter==="all"||o.status===ordFilter});
+  if(!list.length){m.appendChild(h("div.empty",{html:ordFilter==="new"?"Новых заказов нет.<br>Как только кто-то оформит заказ на сайте, он появится здесь.":"Здесь пусто."}));return}
+  list.forEach(function(o){
+    var d=o.data||{},dt=new Date(o.created);
+    var when=dt.toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit"})+" "+dt.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+    var sel=h("select",{style:"max-width:180px;min-height:38px;padding:4px 10px"},Object.keys(ST).map(function(k){return h("option",{value:k,text:ST[k],selected:o.status===k})}));
+    sel.addEventListener("change",function(){var v=sel.value;api("/api/admin/orders/"+o.id,{method:"PATCH",body:{status:v}}).then(function(){o.status=v;toast("Статус: "+ST[v]);loadOrders(true)}).catch(function(e){toast(e.message)})});
+    var kv=[];function add(k,v){if(v){kv.push(h("dt",{text:k}));kv.push(h("dd",{text:v}))}}
+    add("Формат",d.format);add("Повод",d.occasion);add("Дата",d.date?d.date.split("-").reverse().join(".")+(d.time?", "+d.time:""):"");add("Адрес",d.address);add("Гостей",d.guests);add("Комментарий",d.comment);
+    var its=(d.items||[]).map(function(i){return h("li",null,[h("span",{text:i.name+" × "+i.qty}),h("b",{text:fmt(i.price*i.qty)})])});
+    var wa="https://wa.me/"+o.phone+"?text="+encodeURIComponent("Здравствуйте, "+o.name+"! Это шеф Кайржан (PETRO.POVAR), по вашему "+(o.kind==="order"?"заказу":"обращению")+" №"+o.id+".");
+    m.appendChild(h("div.card.ord"+(o.status==="new"?".new":""),null,[
+      h("div.row",null,[h("div.grow",null,[h("h3",null,[(o.kind==="order"?"Заказ":"Заявка")+" №"+o.id,h("span.badge."+o.status,{text:ST[o.status]||o.status})]),h("div.meta",{text:when})]),sel]),
+      h("dl.kv",null,[h("dt",{text:"Имя"}),h("dd",{text:o.name}),h("dt",{text:"Телефон"}),h("dd",{text:pv(o.phone)})].concat(kv)),
+      its.length?h("ul",null,its):null,
+      its.length?h("div.tot",null,[h("span",{text:"Итого"}),h("span",{text:fmt(o.total)})]):null,
+      h("div.row",{style:"margin-top:12px"},[h("a.btn.g.s",{href:wa,target:"_blank",rel:"noopener",text:"WhatsApp"}),h("a.btn.s",{href:"tel:+"+o.phone,text:"Позвонить"}),h("span.grow"),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить "+(o.kind==="order"?"заказ":"заявку")+" №"+o.id+" навсегда?"))return;api("/api/admin/orders/"+o.id,{method:"DELETE"}).then(function(){toast("Удалено");loadOrders()}).catch(function(e){toast(e.message)})}}})])
+    ]));
+  });
+}
+
+/* menu */
+function renderMenu(m){
+  var cats=C.categories;
+  if(!cats.find(function(c){return c.id===menuCat})&&cats[0])menuCat=cats[0].id;
+  m.appendChild(h("div.chips",null,cats.map(function(c){var n=C.dishes.filter(function(d){return d.cat===c.id}).length;return h("button.chip"+(c.id===menuCat?".on":""),{type:"button",on:{click:function(){menuCat=c.id;render()}}},[c.name||"Без названия",h("small",{text:String(n)})])}).concat([h("button.chip",{type:"button",text:"＋ категория",on:{click:function(){var nm=prompt("Название новой категории");if(!nm)return;var c={id:uid("c"),name:nm.trim()};C.categories.push(c);menuCat=c.id;dirty();render()}}})])));
+  var cat=cats.find(function(c){return c.id===menuCat});
+  if(!cat){m.appendChild(h("p.empty",{text:"Добавьте категорию"}));return}
+  var ci=cats.indexOf(cat);
+  m.appendChild(h("div.card",null,[
+    h("div.row",null,[h("div.grow",null,[inp(cat,"name",{label:"Название категории",onchange:function(){}})])]),
+    h("div",{style:"margin-bottom:10px"},[sw(cat,"hidden","Скрыть категорию на сайте")]),
+    h("div.row",null,[h("button.btn.s.ghost",{type:"button",text:"← Левее",on:{click:function(){mv(cats,ci,-1)}}}),h("button.btn.s.ghost",{type:"button",text:"Правее →",on:{click:function(){mv(cats,ci,1)}}}),h("span.grow"),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){var n=C.dishes.filter(function(d){return d.cat===cat.id}).length;if(!confirm(n?"Удалить категорию «"+cat.name+"» и "+n+" блюд в ней?":"Удалить категорию «"+cat.name+"»?"))return;C.dishes=C.dishes.filter(function(d){return d.cat!==cat.id});C.categories.splice(ci,1);menuCat=null;dirty();render()}}})])
+  ]));
+  m.appendChild(h("p.note",{text:"Изменения сохраняются сами и сразу появляются на сайте. Нажмите на кружок, чтобы поставить фото."}));
+  var ds=C.dishes.filter(function(d){return d.cat===cat.id});
+  ds.forEach(function(d){m.appendChild(dishCard(d,ds))});
+  m.appendChild(h("button.btn.p",{type:"button",text:"＋ Добавить блюдо",style:"width:100%;margin-top:6px",on:{click:function(){var d={id:uid("d"),cat:cat.id,name:"Новое блюдо",desc:"",portion:"",price:0,img:""};C.dishes.push(d);dirty();render();var all=document.querySelectorAll(".dish input.nm");var el=all[all.length-1];if(el){el.scrollIntoView({block:"center"});el.select()}}}}));
+}
+function dishCard(d,siblings){
+  var card=h("div.card.dish"+(d.hidden||d.soldout?".off":""));
+  var moreOpen=false,more=h("div.more.hide");
+  var ph=photo(d,"img",false);
+  var sel=h("select",null,C.categories.map(function(c){return h("option",{value:c.id,text:c.name,selected:c.id===d.cat})}));
+  sel.addEventListener("change",function(){d.cat=sel.value;dirty();render()});
+  var idx=C.dishes.indexOf(d);
+  function moveIn(dir){var i=siblings.indexOf(d),j=i+dir;if(j<0||j>=siblings.length)return;var a=C.dishes.indexOf(siblings[i]),b=C.dishes.indexOf(siblings[j]);var t=C.dishes[a];C.dishes[a]=C.dishes[b];C.dishes[b]=t;dirty();render()}
+  more.appendChild(inp(d,"desc",{label:"Состав / описание",area:true,rows:2}));
+  more.appendChild(h("div.two",null,[inp(d,"portion",{label:"Порция",ph:"например: 5 шт, 1 кг, на 12 человек"}),h("label.f",null,[h("span",{text:"Категория"}),sel])]));
+  more.appendChild(h("div.row",null,[h("button.btn.s.ghost",{type:"button",text:"↑ Выше",on:{click:function(){moveIn(-1)}}}),h("button.btn.s.ghost",{type:"button",text:"↓ Ниже",on:{click:function(){moveIn(1)}}}),d.img?h("button.btn.s.ghost",{type:"button",text:"Убрать фото",on:{click:function(){if(!confirm("Убрать фото?"))return;d.img="";dirty();render()}}}):null,h("span.grow"),h("button.btn.s.d",{type:"button",text:"Удалить блюдо",on:{click:function(){if(!confirm("Удалить «"+d.name+"»?"))return;C.dishes.splice(C.dishes.indexOf(d),1);dirty();render()}}})]));
+  var tg=h("button.btn.s.ghost",{type:"button",text:"Подробнее",on:{click:function(){moreOpen=!moreOpen;more.classList.toggle("hide",!moreOpen);tg.textContent=moreOpen?"Свернуть":"Подробнее"}}});
+  card.appendChild(ph.firstChild);
+  card.appendChild(h("div",null,[
+    inp(d,"name",{cls:"nm",ph:"Название"}),
+    h("div.pr",{style:"margin-top:8px"},[inp(d,"price",{num:true,cls:"price",ph:"Цена"}),h("span",{text:"₸"})]),
+    h("div.row",{style:"margin-top:10px;gap:14px"},[sw(d,"soldout","Нет в наличии",false,function(){card.classList.toggle("off",!!(d.hidden||d.soldout))}),sw(d,"hidden","Скрыть",false,function(){card.classList.toggle("off",!!(d.hidden||d.soldout))}),h("span.grow"),tg]),
+    more
+  ]));
+  return card;
+}
+
+/* sets */
+function renderSets(m){
+  m.appendChild(h("p.note",{text:"Состав пишите по одной строке — так он и появится на сайте."}));
+  C.sets.forEach(function(s,i){
+    var groups=h("div");
+    (s.groups||[]).forEach(function(g,gi){
+      groups.appendChild(h("div.grp",null,[h("div.row",null,[h("div.grow",null,[inp(g,"title",{ph:"Раздел, например: Салаты"})]),h("button.icon",{type:"button",title:"Удалить раздел",text:"✕",on:{click:function(){if(!confirm("Удалить раздел «"+g.title+"»?"))return;s.groups.splice(gi,1);dirty();render()}}})]),h("div",{style:"margin-top:8px"},[lines(g,"items","Блюда раздела")])]));
+    });
+    m.appendChild(h("div.card"+(s.hidden?".off":""),null,[
+      photo(s,"img",true),
+      h("div",{style:"margin-top:12px"},[inp(s,"name",{label:"Название сета"})]),
+      h("div.two",null,[inp(s,"price",{label:"Цена, ₸",num:true,cls:"price"}),inp(s,"persons",{label:"На сколько человек",num:true})]),
+      groups,
+      h("div.row",{style:"margin-top:6px"},[h("button.btn.s",{type:"button",text:"＋ Раздел",on:{click:function(){s.groups=s.groups||[];s.groups.push({title:"",items:[]});dirty();render()}}}),sw(s,"soldout","Нет в наличии"),sw(s,"hidden","Скрыть"),h("span.grow"),h("button.icon",{type:"button",text:"↑",on:{click:function(){mv(C.sets,i,-1)}}}),h("button.icon",{type:"button",text:"↓",on:{click:function(){mv(C.sets,i,1)}}}),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить сет «"+s.name+"»?"))return;C.sets.splice(i,1);dirty();render()}}})])
+    ]));
+  });
+  m.appendChild(h("button.btn.p",{type:"button",text:"＋ Добавить сет",style:"width:100%",on:{click:function(){C.sets.push({id:uid("s"),name:"Новый сет",persons:10,price:0,img:"",groups:[{title:"Салаты",items:[]},{title:"Закуски",items:[]},{title:"Горячее",items:[]}]});dirty();render();scrollTo(0,document.body.scrollHeight)}}}));
+}
+
+/* texts */
+function renderTexts(m){
+  var s=C.settings;
+  m.appendChild(h("div.card",null,[h("h2",{text:"Главный экран",style:"font-size:1.4rem;margin-bottom:12px"}),inp(s,"heroKicker",{label:"Строка над заголовком"}),inp(s,"heroTitle",{label:"Заголовок",area:true,rows:2}),inp(s,"heroText",{label:"Текст под заголовком",area:true,rows:3}),inp(s,"notice",{label:"Объявление вверху сайта",ph:"Например: принимаем заказы на Новый год до 25 декабря",hint:"Оставьте пустым, чтобы скрыть"})]));
+  m.appendChild(h("div.card",null,[h("h2",{text:"О шефе",style:"font-size:1.4rem;margin-bottom:12px"}),inp(s,"aboutTitle",{label:"Заголовок"}),inp(s,"aboutText",{label:"Текст",area:true,rows:5})]));
+  m.appendChild(h("div.sec-h",null,[h("h2",{text:"Услуги"}),h("button.btn.s",{type:"button",text:"＋ Услуга",on:{click:function(){C.services.push({title:"Новая услуга",text:"",meta:"",img:""});dirty();render()}}})]));
+  C.services.forEach(function(sv,i){
+    m.appendChild(h("div.card.dish"+(sv.hidden?".off":""),null,[photo(sv,"img",false).firstChild,h("div",null,[inp(sv,"title",{cls:"nm"}),h("div",{style:"margin-top:8px"},[inp(sv,"text",{area:true,rows:2,ph:"Описание"})]),h("div",{style:"margin-top:8px"},[inp(sv,"meta",{ph:"Метки через ·  например: от 30 000 ₸ · за 2–3 дня"})]),h("div.row",{style:"margin-top:8px"},[sw(sv,"hidden","Скрыть"),h("span.grow"),h("button.icon",{type:"button",text:"↑",on:{click:function(){mv(C.services,i,-1)}}}),h("button.icon",{type:"button",text:"↓",on:{click:function(){mv(C.services,i,1)}}}),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить услугу?"))return;C.services.splice(i,1);dirty();render()}}})])])]));
+  });
+  m.appendChild(h("div.sec-h",null,[h("h2",{text:"Условия заказа"}),h("button.btn.s",{type:"button",text:"＋ Блок",on:{click:function(){C.conditions.push({title:"Новый блок",items:[]});dirty();render()}}})]));
+  C.conditions.forEach(function(c,i){
+    m.appendChild(h("div.card",null,[inp(c,"title",{label:"Заголовок"}),lines(c,"items","Пункты — по одному на строку"),h("div.row",null,[h("span.grow"),h("button.btn.s.d",{type:"button",text:"Удалить блок",on:{click:function(){if(!confirm("Удалить блок «"+c.title+"»?"))return;C.conditions.splice(i,1);dirty();render()}}})])]));
+  });
+}
+
+/* reviews */
+function renderReviews(m){
+  m.appendChild(h("p.note",{text:"Добавляйте настоящие отзывы гостей (например, из WhatsApp или Instagram). Пока отзывов нет, раздел на сайте скрыт."}));
+  C.reviews.forEach(function(r,i){
+    m.appendChild(h("div.card"+(r.hidden?".off":""),null,[h("div.two",null,[inp(r,"name",{label:"Имя гостя"}),inp(r,"note",{label:"Подпись",ph:"Например: юбилей, 40 гостей"})]),inp(r,"text",{label:"Отзыв",area:true,rows:3}),h("div.row",null,[sw(r,"hidden","Скрыть"),h("span.grow"),h("button.btn.s.d",{type:"button",text:"Удалить",on:{click:function(){if(!confirm("Удалить отзыв?"))return;C.reviews.splice(i,1);dirty();render()}}})])]));
+  });
+  m.appendChild(h("button.btn.p",{type:"button",text:"＋ Добавить отзыв",style:"width:100%",on:{click:function(){C.reviews.push({name:"",note:"",text:""});dirty();render()}}}));
+}
+
+/* settings */
+function renderSettings(m){
+  var s=C.settings;
+  m.appendChild(h("div.card",null,[
+    h("h2",{text:"Заказы",style:"font-size:1.4rem;margin-bottom:12px"}),
+    h("div",{style:"margin-bottom:12px"},[sw(s,"acceptOrders","Принимать заказы через сайт")]),
+    h("p.note",{text:"Если выключить — заказ не попадёт в админку, а сразу откроется WhatsApp шефа."}),
+    inp(s,"minOrder",{label:"Минимальная сумма заказа, ₸",num:true,hint:"0 — без минимума"}),
+    inp(s,"whatsapp",{label:"WhatsApp для заказов (только цифры)",type:"tel",ph:"77053647644"})
+  ]));
+  m.appendChild(h("div.card",null,[
+    h("h2",{text:"Контакты и цифры",style:"font-size:1.4rem;margin-bottom:12px"}),
+    h("div.two",null,[inp(s,"instagram",{label:"Instagram (без @)"}),inp(s,"threads",{label:"Threads (без @)"})]),
+    h("div.two",null,[inp(s,"restaurantName",{label:"Ресторан"}),inp(s,"restaurant",{label:"Instagram ресторана (без @)"})]),
+    h("div.two",null,[inp(s,"years",{label:"Лет опыта"}),inp(s,"followers",{label:"Подписчиков",ph:"39 тыс."})])
+  ]));
+  // telegram
+  var tTok=h("input",{type:"text",placeholder:"Токен бота от @BotFather",autocomplete:"off"}),tChat=h("input",{type:"text",placeholder:"Например: 123456789"}),tInfo=h("p.note");
+  api("/api/admin/notify").then(function(j){tChat.value=j.tgChats||"";tInfo.textContent=j.hasToken?"Бот подключён ("+j.tokenHint+"). Чтобы сменить — вставьте новый токен.":"Бот не подключён."}).catch(function(){});
+  m.appendChild(h("div.card",null,[
+    h("h2",{text:"Уведомления в Telegram",style:"font-size:1.4rem;margin-bottom:8px"}),
+    h("div.help",{html:"Новые заказы будут приходить сообщением в Telegram.<ol><li>В Telegram откройте <b>@BotFather</b> → /newbot → скопируйте токен.</li><li>Напишите своему боту любое сообщение.</li><li>Откройте <b>@userinfobot</b> — он покажет ваш ID (цифры).</li><li>Вставьте токен и ID ниже → «Сохранить» → «Проверить».</li></ol>"}),
+    tInfo,
+    h("label.f",null,[h("span",{text:"Токен бота"}),tTok]),
+    h("label.f",null,[h("span",{text:"ID чатов (через запятую, если несколько)"}),tChat]),
+    h("div.row",null,[h("button.btn.p.s",{type:"button",text:"Сохранить",on:{click:function(){api("/api/admin/notify",{method:"PUT",body:{tgToken:tTok.value,tgChats:tChat.value}}).then(function(){tTok.value="";toast("Сохранено");render()}).catch(function(e){toast(e.message)})}}}),h("button.btn.s",{type:"button",text:"Проверить",on:{click:function(){api("/api/admin/notify/test",{method:"POST"}).then(function(){toast("Отправлено — проверьте Telegram")}).catch(function(e){toast(e.message)})}}})])
+  ]));
+  // password
+  var o1=h("input",{type:"password",autocomplete:"current-password"}),n1=h("input",{type:"password",autocomplete:"new-password"});
+  m.appendChild(h("div.card",null,[
+    h("h2",{text:"Пароль",style:"font-size:1.4rem;margin-bottom:12px"}),
+    h("label.f",null,[h("span",{text:"Текущий пароль"}),o1]),h("label.f",null,[h("span",{text:"Новый пароль (минимум 6 символов)"}),n1]),
+    h("div.row",null,[h("button.btn.s",{type:"button",text:"Сменить пароль",on:{click:function(){api("/api/admin/password",{method:"POST",body:{old:o1.value,password:n1.value}}).then(function(j){token=j.token;localStorage.setItem(TK,token);o1.value=n1.value="";toast("Пароль изменён")}).catch(function(e){toast(e.message)})}}}),h("span.grow"),h("button.btn.s.d",{type:"button",text:"Выйти",on:{click:function(){if(confirm("Выйти из админки?"))logout()}}})])
+  ]));
+  m.appendChild(h("div.card",null,[
+    h("h2",{text:"Сброс",style:"font-size:1.4rem;margin-bottom:8px"}),
+    h("p.note",{text:"Вернёт меню, сеты и тексты к исходному варианту из PDF шефа. Заказы не удалятся."}),
+    h("button.btn.s.d",{type:"button",text:"Вернуть исходное меню",on:{click:function(){if(!confirm("Точно вернуть исходное меню? Все правки цен, фото и текстов пропадут."))return;C=clone(window.PP_DEFAULT);menuCat=null;dirty();render();toast("Исходное меню восстановлено")}}})
+  ]));
+}
+
+boot();
+})();
+</script>
+</body>
+</html>
