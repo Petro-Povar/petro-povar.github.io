@@ -409,45 +409,31 @@ function renderSettings(m){
     h("div.two",null,[inp(s,"years",{label:"Лет опыта"}),inp(s,"followers",{label:"Подписчиков",ph:"39 тыс."})])
   ]));
   // telegram
-  var tTok=h("input",{type:"text",placeholder:"Вставьте токен от @BotFather",autocomplete:"off",spellcheck:false}),tChat=h("input",{type:"text",placeholder:"Например: 123456789"}),tInfo=h("p.note"),tOut=h("div.help.hide");
-  var saved={hasToken:false};
-  api("/api/admin/notify").then(function(j){saved=j;tChat.value=j.tgChats||"";tInfo.textContent=j.hasToken&&j.tgChats?"Бот подключён ("+j.tokenHint+"), чаты: "+j.tgChats:"Бот пока не подключён.";}).catch(function(){});
+  var tInfo=h("p.note",{text:"Проверяю…"}),tChat=h("input",{type:"text",placeholder:"Например: 123456789"}),tOut=h("div.help.hide");
   function say(html){tOut.innerHTML=html;tOut.classList.remove("hide")}
-  function tg(tok,method){return fetch("https://api.telegram.org/bot"+encodeURIComponent(tok).replace(/%3A/gi,":")+"/"+method).then(function(r){return r.json()})}
-  var connectBtn=h("button.btn.p",{type:"button",text:"Подключить",on:{click:function(){
-    var tok=tTok.value.trim().replace(/\s+/g,"");
-    if(!/^\d{6,}:[\w-]{20,}$/.test(tok)){say("Вставьте токен целиком — он выглядит так: <b>1234567890:AAH…</b>. Его выдаёт @BotFather после создания бота.");return}
-    connectBtn.disabled=true;connectBtn.textContent="Подключаю…";
-    var bot="";
-    tg(tok,"getMe").then(function(me){
-      if(!me.ok)throw new Error("Telegram не принял токен. Скопируйте его из @BotFather ещё раз.");
-      bot=me.result.username;
-      return tg(tok,"getUpdates");
-    }).then(function(up){
-      if(!up.ok)throw new Error("Telegram: "+(up.description||"ошибка"));
-      var found={};
-      (up.result||[]).forEach(function(u){var m=u.message||u.edited_message||u.channel_post||u.my_chat_member||{};var c=m.chat;if(c&&c.id)found[c.id]=c.title||[c.first_name,c.last_name].filter(Boolean).join(" ")||c.username||String(c.id)});
-      var ids=Object.keys(found);
-      if(!ids.length){say("Почти готово. Откройте бота <a href=\"https://t.me/"+bot+"\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--wine);font-weight:700\">@"+bot+"</a>, нажмите <b>«Старт»</b> (или напишите ему любое сообщение) и снова нажмите «Подключить».");return}
-      var all=(tChat.value||"").split(/[,\s]+/).filter(Boolean);ids.forEach(function(i){if(all.indexOf(i)<0)all.push(i)});
-      tChat.value=all.join(", ");
-      return api("/api/admin/notify",{method:"PUT",body:{tgToken:tok,tgChats:tChat.value}}).then(function(){return api("/api/admin/notify/test",{method:"POST"})}).then(function(){
-        tTok.value="";
-        say("✅ Готово! Бот @"+bot+" подключён. Проверочное сообщение отправлено в Telegram: "+ids.map(function(i){return "<b>"+found[i].replace(/[<>&]/g,"")+"</b>"}).join(", ")+".<br>Теперь каждый заказ и каждая заявка с сайта сразу придут сюда.<br>Чтобы уведомления получал и шеф — пусть он тоже нажмёт «Старт» у @"+bot+", а вы ещё раз вставьте токен и нажмите «Подключить».");
-        tInfo.textContent="Бот подключён: @"+bot+", чаты: "+tChat.value;
-      });
-    }).catch(function(e){say("Не получилось: "+String(e.message||e).replace(/[<>&]/g,""))}).then(function(){connectBtn.disabled=false;connectBtn.textContent="Подключить"});
+  api("/api/admin/notify").then(function(j){
+    tChat.value=j.tgChats||"";
+    tInfo.textContent=j.fromSecret?"Токен бота взят из секрета TG_TOKEN в Cloudflare."
+      :j.hasToken?"Токен сохранён в базе сайта.":"Токен не задан. Добавьте секрет TG_TOKEN в Cloudflare.";
+  }).catch(function(){tInfo.textContent=""});
+  var testBtn=h("button.btn.p",{type:"button",text:"Проверить уведомления",on:{click:function(){
+    testBtn.disabled=true;testBtn.textContent="Отправляю…";tOut.classList.add("hide");
+    api("/api/admin/notify/test",{method:"POST"}).then(function(r){
+      say("✅ Готово! Проверочное сообщение отправлено в Telegram"+(r.chats>1?" ("+r.chats+" чата)":"")+".<br>Теперь каждый заказ и каждая заявка с сайта придут туда сразу.");
+    }).catch(function(e){
+      say("Не получилось: "+String(e.message||e).replace(/[<>&]/g,"")+"<br>Проверьте, что в Cloudflare добавлен секрет <b>TG_TOKEN</b> и что вы нажали <b>«Старт»</b> у своего бота.");
+    }).then(function(){testBtn.disabled=false;testBtn.textContent="Проверить уведомления"});
   }}});
   m.appendChild(h("div.card",null,[
     h("h2",{text:"Уведомления в Telegram",style:"font-size:1.4rem;margin-bottom:8px"}),
-    h("div.help",{html:"Новые заказы и заявки сразу приходят сообщением в Telegram.<ol><li>Вставьте ниже токен бота из @BotFather.</li><li>Откройте своего бота в Telegram и нажмите <b>«Старт»</b>.</li><li>Нажмите <b>«Подключить»</b> — придёт проверочное сообщение.</li></ol>"}),
+    h("div.help",{html:"Новые заказы и заявки сразу приходят сообщением в Telegram.<ol><li>Токен бота хранится в Cloudflare — секрет <b>TG_TOKEN</b>.</li><li>Откройте своего бота в Telegram и нажмите <b>«Старт»</b>.</li><li>Нажмите кнопку ниже — придёт проверочное сообщение.</li></ol>"}),
     tInfo,
-    h("label.f",null,[h("span",{text:"Токен бота"}),tTok]),
-    h("div.row",null,[connectBtn,h("button.btn.s",{type:"button",text:"Проверить",on:{click:function(){api("/api/admin/notify/test",{method:"POST"}).then(function(){toast("Отправлено — проверьте Telegram")}).catch(function(e){toast(e.message)})}}})]),
+    testBtn,
     tOut,
-    h("details",{style:"margin-top:12px"},[h("summary",{text:"ID чатов вручную",style:"cursor:pointer;font-size:.88rem;color:var(--muted)"}),h("div",{style:"margin-top:10px"},[
-      h("label.f",null,[h("span",{text:"ID чатов (через запятую)"}),tChat]),
-      h("button.btn.s",{type:"button",text:"Сохранить ID",on:{click:function(){api("/api/admin/notify",{method:"PUT",body:{tgToken:tTok.value.trim(),tgChats:tChat.value}}).then(function(){toast("Сохранено")}).catch(function(e){toast(e.message)})}}})
+    h("details",{style:"margin-top:14px"},[h("summary",{text:"ID чатов вручную",style:"cursor:pointer;font-size:.88rem;color:var(--muted)"}),h("div",{style:"margin-top:10px"},[
+      h("p.note",{text:"Обычно не нужно: сайт сам находит чат после «Старт». Здесь можно задать чаты вручную, через запятую."}),
+      h("label.f",null,[h("span",{text:"ID чатов"}),tChat]),
+      h("button.btn.s",{type:"button",text:"Сохранить ID",on:{click:function(){api("/api/admin/notify",{method:"PUT",body:{tgChats:tChat.value}}).then(function(){toast("Сохранено")}).catch(function(e){toast(e.message)})}}})
     ])])
   ]));
   // password

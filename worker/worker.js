@@ -100,7 +100,8 @@ export default {
         }
         if (p === "/api/admin/notify" && m === "GET") {
           const n = safeParse(await kvGet(env, "notify")) || {};
-          return json({ tgChats: n.tgChats || "", hasToken: !!n.tgToken, tokenHint: n.tgToken ? n.tgToken.slice(0, 6) + "…" : "" }, 200, cors);
+          const envTok = String(env.TG_TOKEN || "").trim();
+          return json({ tgChats: String(env.TG_CHAT || n.tgChats || ""), hasToken: !!(envTok || n.tgToken), fromSecret: !!envTok }, 200, cors);
         }
         if (p === "/api/admin/notify" && m === "PUT") {
           const b = await body(req);
@@ -192,18 +193,35 @@ function orderMessage(id, kind, name, phone, d, total) {
 }
 async function telegram(env, text) {
   const n = safeParse(await kvGet(env, "notify")) || {};
-  if (!n.tgToken || !n.tgChats) return { ok: false, error: "Не указан токен бота или ID чата" };
-  const chats = n.tgChats.split(/[,\s]+/).filter(Boolean);
+  const tok = String(env.TG_TOKEN || "").trim() || String(n.tgToken || "").trim();
+  if (!tok) return { ok: false, error: "Не задан токен бота: добавьте секрет TG_TOKEN в Cloudflare" };
+  let chats = String(env.TG_CHAT || n.tgChats || "").split(/[,\s]+/).filter(Boolean);
+  if (!chats.length) chats = await discoverChats(env, tok, n);
+  if (!chats.length) return { ok: false, error: "Откройте бота в Telegram и нажмите «Старт», затем повторите" };
   let ok = 0, last = "";
   for (const chat of chats) {
-    const r = await fetch(`https://api.telegram.org/bot${n.tgToken}/sendMessage`, {
+    const r = await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: chat, text, disable_web_page_preview: true }),
     });
     const j = await r.json().catch(() => ({}));
     if (j.ok) ok++; else last = j.description || ("HTTP " + r.status);
   }
-  return ok ? { ok: true, sent: ok } : { ok: false, error: "Telegram: " + last };
+  return ok ? { ok: true, sent: ok, chats: chats.length } : { ok: false, error: "Telegram: " + last };
+}
+async function discoverChats(env, tok, n) {
+  try {
+    const j = await fetch(`https://api.telegram.org/bot${tok}/getUpdates`).then((r) => r.json());
+    if (!j.ok) return [];
+    const ids = [];
+    (j.result || []).forEach((u) => {
+      const msg = u.message || u.edited_message || u.channel_post || u.my_chat_member || {};
+      const c = msg.chat;
+      if (c && c.id && ids.indexOf(String(c.id)) < 0) ids.push(String(c.id));
+    });
+    if (ids.length) { n.tgChats = ids.join(","); await kvSet(env, "notify", JSON.stringify(n)); }
+    return ids;
+  } catch { return []; }
 }
 
 /* ---------- images ---------- */
