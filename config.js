@@ -1,2 +1,2 @@
 /* Адрес сервера (Cloudflare Worker). Пусто — сайт работает без базы: заказы уходят только в WhatsApp. */
-window.PP_API = "";
+window.PP_API = "https://petropovar-api.tamerlankajrolla2.workers.dev";
