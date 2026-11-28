@@ -689,7 +689,7 @@ function S(){return (C&&C.settings)||DEF.settings}
 function merge(c){
   if(!c||typeof c!=="object")return DEF;
   var out={};for(var k in DEF)out[k]=(c[k]!=null?c[k]:DEF[k]);
-  if(!Array.isArray(out.reviews)||!out.reviews.length)out.reviews=DEF.reviews;
+  if(!Array.isArray(out.reviews)||!out.reviews.some(function(x){return x&&x.text}))out.reviews=DEF.reviews;
   out.settings=Object.assign({},DEF.settings,c.settings||{});
   return out;
 }
