@@ -200,7 +200,7 @@ function start(){
   loadOrders();
   if(!started){started=true;poll=setInterval(function(){if(!document.hidden&&token)loadOrders(true)},30000)}
 }
-function fillDefaults(c){var d=window.PP_DEFAULT;["services","conditions","categories","dishes","sets","reviews"].forEach(function(k){if(!Array.isArray(c[k]))c[k]=clone(d[k])});c.settings=Object.assign({},d.settings,c.settings||{});return c}
+function fillDefaults(c){var d=window.PP_DEFAULT;["services","conditions","categories","dishes","sets","reviews"].forEach(function(k){if(!Array.isArray(c[k])||(k==="reviews"&&!c[k].length))c[k]=clone(d[k])});c.settings=Object.assign({},d.settings,c.settings||{});return c}
 
 /* ---------- autosave ---------- */
 var saveT=null,saving=false,again=false;
